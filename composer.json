@@ -1,0 +1,16 @@
+{
+  "name": "jgauthi/component_fakedata",
+  "description": "Random data generation for testing and dev environments (data fixtures)",
+  "type": "library",
+  "homepage": "https://github.com/jgauthi/component_fakedata",
+  "require": {
+    "php": ">=5.4"
+  },
+  "autoload": {
+    "psr-4": { "Jgauthi\\Component\\Fakedata\\": "src/" }
+  },
+  "license": "GPL-3.0",
+  "authors": [
+    { "name": "jgauthi", "homepage": "https://github.com/jgauthi" }
+  ]
+}
