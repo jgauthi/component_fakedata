@@ -1,86 +1,69 @@
 <?php
 namespace Jgauthi\Component\Fakedata;
 
+use mysqli;
+
 class InsertTable extends Generator
 {
     // var SQL
-    public $table = [];
-    public $debug = false;
+    public array $table = [];
+    public bool $debug = false;
+    private mysqli $mysqli;
 
-    /**
-     * random_sql constructor.
-     *
-     * @param int $nb_data
-     */
-    public function __construct($nb_data = 200)
+    public function __construct(mysqli $mysqli, int $nb_data = 200)
     {
         // Changer config serveur
         @ini_set('max_execution_time', 0);
         @ini_set('memory_limit', '128M');
 
+        $this->mysqli = $mysqli;
         parent::__construct($nb_data);
     }
 
-    /**
-     * @param $new_table
-     */
-    public function set_table($new_table)
+    public function set_table(string $new_table): self
     {
         if (is_array($new_table)) {
             $this->table = array_merge($this->table, $new_table);
         } else {
             $this->table[] = $new_table;
         }
+
+        return $this;
     }
 
     /**
-     * @param $req
-     *
-     * @return bool
+     * @return \mysqli_result|bool
      */
-    public function query($req)
+    public function query(string $req)
     {
         if ($this->debug) {
             echo "<pre>{$req}</pre>\n";
         }
 
-        return mysql_query($req) or die(mysql_error());
+        return mysqli_query($this->mysqli, $req) or die(mysqli_error($this->mysqli));
     }
 
-    /**
-     * @param $var
-     *
-     * @return string
-     */
-    public function sql_data($var)
+    public function sql_data(string $var): string
     {
         if ('' === $var || null === $var) {
             return 'NULL';
-        } elseif (1 === get_magic_quotes_gpc()) {
-            return "'".$var."'";
         }
 
         return "'".addslashes($var)."'";
     }
 
     /**
-     * @param $index
-     * @param $req
-     *
-     * @return bool
+     * @return mixed
      */
-    public function insert($index, $req)
+    public function insert(string $index, string $req)
     {
         return  $this->query("INSERT INTO `{$this->table[$index]}` SET {$req};");
     }
 
     /**
-     * @param $index
-     * @param $array
-     *
-     * @return bool
+     * @return mixed
      */
-    public function insert_data($index, $array)
+    public function insert_data(string $index, iterable $array)
     {
         foreach ($array as $nom => $value) {
             if (!isset($req)) {
@@ -95,28 +78,19 @@ class InsertTable extends Generator
         return  $this->insert($index, $req);
     }
 
-    /**
-     * @param int    $index
-     * @param string $champ
-     *
-     * @return int
-     */
-    public function get_last_id($index = 0, $champ = 'id')
+    public function get_last_id(string $index = '0', string $champ = 'id'): int
     {
-        $last = mysql_query("SELECT MAX($champ) as max FROM `".$this->table[$index].'`;');
-        if (1 === mysql_num_rows($last)) {
-            $last = mysql_fetch_row($last);
+        $last = mysqli_query($this->mysqli, "SELECT MAX($champ) as max FROM `".$this->table[$index].'`;');
+        if (mysqli_num_rows($last)) {
+            $last = mysqli_fetch_row($last);
 
-            return  $last[0];
+            return $last[0];
         }
 
         return 0;
     }
 
-    /**
-     * @return bool
-     */
-    public function boucle()
+    public function boucle(): bool
     {
         static $n = 0;
 
@@ -130,10 +104,7 @@ class InsertTable extends Generator
         return false;
     }
 
-    /**
-     * @return bool
-     */
-    public function reset()
+    public function reset(): bool
     {
         if (!is_array($this->table) || 0 === count($this->table)) {
             return false;

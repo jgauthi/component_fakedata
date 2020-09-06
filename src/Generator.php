@@ -3,7 +3,7 @@
  * @name: Generator & Random SQL
  * @note: Random data generation for testing and dev environments (data fixtures)
  * @author: Jgauthi <github.com/jgauthi>, created at [10oct2010]
- * @version: 1.0
+ * @version: 2.0
  * @Todo: Implement the method debug_dupplicate_array in the class
  * @alternative: https://github.com/fzaninotto/Faker
 
@@ -13,19 +13,19 @@ namespace Jgauthi\Component\Fakedata;
 class Generator
 {
     // Var random
-    protected $lorem;
-    protected $texte;
-    protected $text_count;
-    protected $phrase;
-    protected $phrase_count;
+    protected string $lorem;
+    protected array $texte;
+    protected int $text_count;
+    protected array $phrase;
+    protected int $phrase_count;
 
-    public $nb_data;
-    protected $liste = [];
+    public int $nb_data;
+    protected array $liste = [];
 
     // Conserver une trace des donnees deja generer pour eviter les doublons
-    public $code_list = [];
+    public array $code_list = [];
 
-    public function __construct($nb_data = 200)
+    public function __construct(int $nb_data = 200)
     {
         // Variables
         $this->nb_data = $nb_data;
@@ -49,20 +49,12 @@ class Generator
 
     //-- function RANDOM () -------------------------------------------------------------------
 
-    /**
-     * @return bool
-     */
-    public function bool()
+    public function bool(): bool
     {
         return  (bool) rand(0, 1);
     }
 
-    /**
-     * @param int $length
-     *
-     * @return int
-     */
-    public function int($length = 3)
+    public function int(int $length = 3): int
     {
         $result = rand();
         if ($length > 5) {
@@ -75,33 +67,17 @@ class Generator
         //return rand(0, 10 ^ $length );
     }
 
-    /**
-     * @param $num
-     *
-     * @return int
-     */
-    public function pourcent($num)
+    public function pourcent(int $num): int
     {
         return  (rand(0, 10000) / 100) <= $num;
     }
 
-    /**
-     * @param int $nb
-     * @param int $decimal
-     *
-     * @return float
-     */
-    public function float($nb = 2, $decimal = 2)// A améliorer
+    public function float(int $nb = 2, int $decimal = 2): float //todo: require update
     {
         return round((mt_rand() / mt_getrandmax() * 1000), $decimal, PHP_ROUND_HALF_UP);
     }
 
-    /**
-     * @param int $nb
-     *
-     * @return string
-     */
-    public function txt($nb = 3)
+    public function txt(int $nb = 3): string
     {
         for ($i = 0; $i < $nb; ++$i) {
             if (!isset($var)) {
@@ -124,10 +100,7 @@ class Generator
         return ucfirst($var);
     }
 
-    /**
-     * @return mixed
-     */
-    public function nom()
+    public function nom(): string
     {
         static $save = [];
 
@@ -137,15 +110,11 @@ class Generator
         } while (in_array($nom, $save, true));
         // Ne pas avoir 2 fois le même nom généré
 
-        return  $save[] = $nom;
+        $save[] = $nom;
+        return $nom;
     }
 
-    /**
-     * @param bool $uniq
-     *
-     * @return string
-     */
-    public function nom_roster($uniq = false)
+    public function nom_roster(bool $uniq = false): string
     {
         static $save = [], $roster = [
             'Cave Johnson', 'Adam Jensen', 'Chloé Price', 'Max Caufield',
@@ -169,12 +138,7 @@ class Generator
         return $roster[$id_roster];
     }
 
-    /**
-     * @param string|null $domain
-     *
-     * @return string
-     */
-    public function mail($domain = null)
+    public function mail(?string $domain = null): string
     {
         static $save = [];
 
@@ -196,12 +160,7 @@ class Generator
         return  $save[] = $mail;
     }
 
-    /**
-     * @param string|null $domain
-     *
-     * @return string
-     */
-    public function mail_roster($domain = null)
+    public function mail_roster(?string $domain = null): string
     {
         static $save = [];
 
@@ -220,15 +179,14 @@ class Generator
         } while (in_array($mail, $save, true));
         // Ne pas avoir 2 fois le même nom généré
 
-        return  $save[] = $mail;
+        $save[] = $mail;
+        return $mail;
     }
 
     /**
      * Random User API: https://randomuser.me/documentation#howto.
-     *
-     * @return mixed
      */
-    public function identite()
+    public function identite(): array
     {
         $args = ['ssl' => ['verify_peer' => false]];
 
@@ -257,14 +215,7 @@ class Generator
         return $json['results'][0];
     }
 
-    /**
-     * Local mindev Random User.
-     *
-     * @param string|null $mail_domain
-     *
-     * @return array
-     */
-    public function identite_roster($mail_domain = null)
+    public function identite_roster(?string $mail_domain = null): array
     {
         static $save = [];
 
@@ -300,12 +251,7 @@ class Generator
         return $identite;
     }
 
-    /**
-     * @param int $nb
-     *
-     * @return string
-     */
-    public function txt_phrase($nb = 1)
+    public function txt_phrase(int $nb = 1): string
     {
         static $save = [];
         $text = '';
@@ -325,12 +271,7 @@ class Generator
         return $text;
     }
 
-    /**
-     * @param int $nb
-     *
-     * @return string
-     */
-    public function txt_paragraphe($nb = 1)
+    public function txt_paragraphe(int $nb = 1): string
     {
         $text = '';
 
@@ -341,13 +282,7 @@ class Generator
         return $text;
     }
 
-    /**
-     * @param string|null $debut
-     * @param string|null $fin
-     *
-     * @return int
-     */
-    public function timestamp($debut = null, $fin = null)
+    public function timestamp(?int $debut = null, ?int $fin = null): int
     {
         $debut = ((!empty($debut) && is_numeric($debut)) ? $debut : 0);
         $fin = ((!empty($fin) && is_numeric($fin)) ? $fin : time());
@@ -355,44 +290,28 @@ class Generator
         return  rand($debut, $fin);
     }
 
-    /**
-     * @param string|null $type
-     * @param string|null $debut
-     * @param string|null $fin
-     *
-     * @return false|string
-     */
-    public function date($type = null, $debut = null, $fin = null)
+    public function date(?string $type = null, ?int $debut = null, ?int $fin = null): string
     {
         $type = ((!empty($type)) ? $type : 'd/m/Y');
 
         return  date($type, $this->timestamp($debut, $fin));
     }
 
-    /**
-     * @param int $width
-     * @param int $height
-     *
-     * @return string
-     */
-    public function image($width = 400, $height = 300)
+    public function image(int $width = 400, int $height = 300): string
     {
         $url = "https://picsum.photos/{$width}/{$height}/?random";
 
         return $url;
     }
 
-    /**
-     * @return bool|mixed
-     */
-    /* public function image_specimen()
+    /*public function image_specimen(): string
     {
         static $list_img = null, $nb_img;
 
         $imgdir = 'img/specimen';
         if (null === $list_img) {
             if (!defined('ASSET_PATH') || !defined('ASSET_URL')) {
-                return !trigger_error('Require mindev app init');
+                throw new InvalidArgumentException('Require mindev app init');
             }
 
             $files = glob(ASSET_PATH."/{$imgdir}/*.*");
@@ -416,12 +335,9 @@ class Generator
         }
 
         return $list_img[rand(0, $nb_img - 1)];
-    } */
+    }*/
 
-    /**
-     * @return string
-     */
-    public function url()
+    public function url(): string
     {
         $url = (($this->bool()) ? 'https://' : 'http://');
         $url .= (($this->bool()) ? 'www.' : null);
@@ -438,22 +354,14 @@ class Generator
         return $url;
     }
 
-    /**
-     * @return int
-     */
-    public function nbplus()
+    public function nbplus(): int
     {
         static $n = 0;
 
         return $n++;
     }
 
-    /**
-     * @param int $max
-     *
-     * @return string
-     */
-    public function password($max = 7)
+    public function password(int $max = 7): string
     {
         // The letter O (uppercase o) and the number 0 have been removed
         // The letter l (lowercase L) and the number 1 have been removed
@@ -471,13 +379,7 @@ class Generator
         return $password;
     }
 
-    /**
-     * @param int         $max
-     * @param string|null $first_letter
-     *
-     * @return string
-     */
-    public function code($max = 7, $first_letter = null)
+    public function code(int $max = 7, ?string $first_letter = null): string
     {
         // The letter O (uppercase o) and the number 0 have been removed
         // --> as they can be mistaken for each other.
@@ -498,42 +400,31 @@ class Generator
         } while (in_array($code, $this->code_list, true));
         // Ne pas avoir 2 fois le même code généré
 
-        return $this->code_list[] = $code;
+        $this->code_list[] = $code;
+        return $code;
     }
 
-    /**
-     * @param int $index
-     *
-     * @return array
-     */
-    public function liste($index = 0)
+    public function liste(string $index = '0'): string
     {
-        return $this->liste[$index][rand(0, count($this->liste[$index]) - 1)];
+        $randKey = rand(0, count($this->liste[$index]) - 1);
+        return $this->liste[$index][$randKey];
     }
 
-    /**
-     * @param $array
-     * @param int $index
-     */
-    public function set_liste($array, $index = 0)
+    public function set_liste(array $array, string $index = '0'): self
     {
         $this->liste[$index] = $array;
+
+        return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function status()
+    public function status(): string
     {
         static $status = ['open', 'pending', 'resolved', 'closed'];
 
         return $status[rand(0, count($status) - 1)];
     }
 
-    /**
-     * @return string
-     */
-    public function city()
+    public function city(): string
     {
         static $ville = [
             // France
@@ -549,30 +440,21 @@ class Generator
         return $ville[rand(0, count($ville) - 1)];
     }
 
-    /**
-     * @return string
-     */
-    public function country()
+    public function country(): string
     {
         static $country = ['Chine', 'Etats-Unis', 'Inde', 'Indonesie', 'Bresil', 'Pakistan', 'Russie', 'Japon', 'Allemagne', 'France', 'Canada'];
 
         return $country[rand(0, count($country) - 1)];
     }
 
-    /**
-     * @return string
-     */
-    public function adresse()
+    public function adresse(): string
     {
         static $rue = ['rue', 'boulevard', 'avenue', 'place'];
 
         return  rand(1, 155).' '.$rue[rand(0, count($rue) - 1)].' '.$this->txt();
     }
 
-    /**
-     * @return string
-     */
-    public function wysiwyg()
+    public function wysiwyg(): string
     {
         $nb_line = rand(3, 5);
         $data = [];
@@ -607,8 +489,8 @@ class Generator
                                 break;
 
                             case 3:
-                                $balise_start = '<strike>';
-                                $balise_end = '</strike>';
+                                $balise_start = '<del>';
+                                $balise_end = '</del>';
                                 break;
                         }
 
@@ -642,7 +524,6 @@ class Generator
                     } else {
                         $data[] = "<p>{$txt}</p>";
                     }
-
                     break;
 
                 case 2: // liste
@@ -655,7 +536,6 @@ class Generator
                     }
 
                     $data[] = "<{$typelist}>{$liste}</{$typelist}>";
-
                     break;
             }
         }
@@ -678,7 +558,7 @@ function debug_dupplicate_array($array, $nb = 50, $colonne_edit = null)
 
     // Valeur aléatoire pour certaines colonnes
     if (!empty($colonne_edit)) {
-        $rand = new random();
+        $rand = new Generator;
         $objet = is_object($array[$first_key]);
         if (!is_array($colonne_edit)) {
             $colonne_edit = preg_split('#[ ]+#', str_replace([',', ';', "\n", "\r"], ' ', $colonne_edit));
