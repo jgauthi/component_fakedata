@@ -4,6 +4,7 @@ Random data generation for testing and dev environments (data fixtures).
 ## Prerequisite
 
 * PHP 5.4+ (v1+) ou PHP 7 & 7.4 (v2)
+* PHP Extension: Json, Mbstring, Mysql
 
 ## Install
 Edit your [composer.json](https://getcomposer.org) (launch `composer update` after edit):

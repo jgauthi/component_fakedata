@@ -4,7 +4,10 @@
   "type": "library",
   "homepage": "https://github.com/jgauthi/component_fakedata",
   "require": {
-    "php": ">=5.4"
+    "php": ">=5.4",
+    "ext-json": "*",
+    "ext-mbstring": "*",
+    "ext-mysql": "*"
   },
   "autoload": {
     "psr-4": { "Jgauthi\\Component\\Fakedata\\": "src/" }
